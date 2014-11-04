@@ -15,7 +15,7 @@
  * @version		1.0.0
  * @see			rubato.controller.RubatoForm
  * @create		2014-10-21	1.0.0
- * @update		2014-11-04	1.0.2
+ * @update		2014-11-04	1.0.3
  */
 
 
@@ -70,38 +70,46 @@ class RubatoMailForm extends RubatoForm {
 		//--------------------------------------------------
 		// ユーザー宛メール
 		//--------------------------------------------------
-		if (!file_exists($this->_mailUser['body'])
-			&& !file_exists(TEMPLATE_PATH . "/" . $this->_mailUser['body']))
-			throw new FileNotFoundException("メール本文テンプレート ( {$this->_mailUser['body']} ) がみつかりません", RubatoException::ERROR);
+		if (isset($this->_mailUser['to']) && isset($this->_mailUser['body'])) {
+			if (!file_exists($this->_mailUser['body'])
+				&& !file_exists(TEMPLATE_PATH . "/" . $this->_mailUser['body']))
+				throw new FileNotFoundException("メール本文テンプレート ( {$this->_mailUser['body']} ) がみつかりません", RubatoException::ERROR);
 
-		$mailObj = new RubatoMail();
-		$mailObj->setTo($this->_data[$this->_mailUser['to']]);
-		$mailObj->setSubject($this->_mailUser['subject']);
-		$mailObj->setBody($this->_main->view->fetch($this->_mailUser['body']));
-		if (isset($this->_mailUser['from'])) $mailObj->setFrom($this->_mailUser['from']);
-		if (isset($this->_mailUser['reply'])) $mailObj->setReplyTo($this->_mailUser['reply']);
-		if (isset($this->_mailUser['cc'])) $mailObj->setCc($this->_mailUser['cc']);
-		if (isset($this->_mailUser['bcc'])) $mailObj->setBcc($this->_mailUser['bcc']);
+			if (!isset($this->_data[$this->_mailUser['to']])) {
+				throw new Exception("メール設定に誤りがあります", RubatoException::ERROR);
+			}
 
-		$mailObj->send();
+			$mailObj = new RubatoMail();
+			$mailObj->setTo($this->_data[$this->_mailUser['to']]);
+			$mailObj->setSubject($this->_mailUser['subject']);
+			$mailObj->setBody($this->_main->view->fetch($this->_mailUser['body']));
+			if (isset($this->_mailUser['from'])) $mailObj->setFrom($this->_mailUser['from']);
+			if (isset($this->_mailUser['reply'])) $mailObj->setReplyTo($this->_mailUser['reply']);
+			if (isset($this->_mailUser['cc'])) $mailObj->setCc($this->_mailUser['cc']);
+			if (isset($this->_mailUser['bcc'])) $mailObj->setBcc($this->_mailUser['bcc']);
+	
+			$mailObj->send();
+		}
 
 		//--------------------------------------------------
 		// 管理者宛メール
 		//--------------------------------------------------
-		if (!file_exists($this->_mailAdmin['body'])
-			&& !file_exists(TEMPLATE_PATH . "/" . $this->_mailAdmin['body']))
-			throw new FileNotFoundException("メール本文テンプレート ( {$this->_mailAdmin['body']} ) がみつかりません", RubatoException::ERROR);
+		if (isset($this->_mailAdmin['to']) && isset($this->_mailAdmin['body'])) {
+			if (!file_exists($this->_mailAdmin['body'])
+				&& !file_exists(TEMPLATE_PATH . "/" . $this->_mailAdmin['body']))
+				throw new FileNotFoundException("メール本文テンプレート ( {$this->_mailAdmin['body']} ) がみつかりません", RubatoException::ERROR);
 
-		$mailObj = new RubatoMail();
-		$mailObj->setTo($this->_mailAdmin['to']);
-		$mailObj->setSubject($this->_mailAdmin['subject']);
-		$mailObj->setBody($this->_main->view->fetch($this->_mailAdmin['body']));
-		if (isset($this->_mailAdmin['from'])) $mailObj->setFrom($this->_mailAdmin['from']);
-		if (isset($this->_mailAdmin['reply'])) $mailObj->setReplyTo($this->_mailAdmin['reply']);
-		if (isset($this->_mailAdmin['cc'])) $mailObj->setCc($this->_mailAdmin['cc']);
-		if (isset($this->_mailAdmin['bcc'])) $mailObj->setBcc($this->_mailAdmin['bcc']);
+			$mailObj = new RubatoMail();
+			$mailObj->setTo($this->_mailAdmin['to']);
+			$mailObj->setSubject($this->_mailAdmin['subject']);
+			$mailObj->setBody($this->_main->view->fetch($this->_mailAdmin['body']));
+			if (isset($this->_mailAdmin['from'])) $mailObj->setFrom($this->_mailAdmin['from']);
+			if (isset($this->_mailAdmin['reply'])) $mailObj->setReplyTo($this->_mailAdmin['reply']);
+			if (isset($this->_mailAdmin['cc'])) $mailObj->setCc($this->_mailAdmin['cc']);
+			if (isset($this->_mailAdmin['bcc'])) $mailObj->setBcc($this->_mailAdmin['bcc']);
 
-		$mailObj->send();
+			$mailObj->send();
+		}
 	}
 
 
