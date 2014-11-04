@@ -1,0 +1,46 @@
+<html>
+<head>
+	<title>メールフォーム：入力画面</title>
+</head>
+<body>
+
+<h2>入力画面</h2>
+
+
+<form method="post" action="{{$smarty.server.PHP_SELF}}" name="mailForm">
+	<small>（※）必須入力</small>
+	<table border="1">
+		<tr>
+			<th>名前 <small>（※）</small></th>
+			<td>姓：<input type="text" name="sei" size="20" value="{{$data.sei}}">
+				名：<input type="text" name="mei" size="20" value="{{$data.mei}}">
+				{{if $error.name}}<p style="color:red;">{{$error.name}}</p>{{/if}}
+				</td>
+		</tr>
+		<tr>
+			<th>メールアドレス <small>（※）</small></th>
+			<td><input type="text" name="account" size="20" value="{{$data.account}}"> @
+				<input type="text" name="domain" size="20" value="{{$data.domain}}">
+				{{if $error.email}}<p style="color:red;">{{$error.email}}</p>{{/if}}
+				</td>
+		</tr>
+		<tr>
+			<th>電話番号</th>
+			<td><input type="text" name="tel1" size="5" value="{{$data.tel1}}"> -
+				<input type="text" name="tel2" size="5" value="{{$data.tel2}}"> -
+				<input type="text" name="tel3" size="5" value="{{$data.tel3}}">
+				{{if $error.tel}}<p style="color:red;">{{$error.tel}}</p>{{/if}}
+				</td>
+		</tr>
+	</table>
+
+	<p>
+		<input type="submit" value="確認画面へ">
+	</p>
+
+	<input type="hidden" name="act" value="confirm">
+</form>
+
+
+</body>
+</html>

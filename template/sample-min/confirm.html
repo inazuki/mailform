@@ -1,0 +1,34 @@
+<html>
+<head>
+	<title>メールフォーム：確認画面</title>
+</head>
+<body>
+
+<h2>確認画面</h2>
+
+
+<form method="post" action="{{$smarty.server.PHP_SELF}}" name="mailForm">
+	<table border="1">
+		<tr>
+			<th>名前</th>
+			<td>{{$data.name|escape}}</td>{{** HTMLタグを入力される可能性がある場合は、escape を付ける **}}
+		</tr>
+		<tr>
+			<th>メールアドレス</th>
+			<td>{{$data.email}}</td>
+		</tr>
+	</table>
+
+	<p>
+		<input type="submit" value="再入力する" onclick="document.mailForm.act.value='input';">
+		<input type="submit" value="登録する" onclick="document.mailForm.act.value='complete';">
+	</p>
+
+	<input type="hidden" name="act" value="">
+	{{** 入力画面へ： <input type="hidden" name="act" value="input"> **}}
+	{{** 完了画面へ： <input type="hidden" name="act" value="complete"> **}}
+</form>
+
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+<html>
+<head>
+	<title>メールフォーム：確認画面</title>
+</head>
+<body>
+
+<h2>確認画面</h2>
+
+
+<form method="post" action="{{$smarty.server.PHP_SELF}}" name="mailForm">
+	<table border="1">
+		<tr>
+			<th>名前</th>
+			<td>{{$data.name|escape}}</td>{{** HTMLタグを入力される可能性がある場合は、escape を付ける **}}
+		</tr>
+		<tr>
+			<th>フリガナ</th>
+			<td>{{$data.kana}}</td>
+		</tr>
+		<tr>
+			<th>メールアドレス</th>
+			<td>{{$data.email}}</td>
+		</tr>
+		<tr>
+			<th>電話番号</th>
+			<td>{{$data.tel}}</td>
+		</tr>
+		<tr>
+			<th>郵便番号</th>
+			<td>{{$data.zip}}</td>
+		</tr>
+		<tr>
+			<th>選択項目1</th>
+			<td>{{$data.select1}}</td>
+		</tr>
+		<tr>
+			<th>選択項目2</th>
+			<td>{{$data.select2}}</td>
+		</tr>
+		<tr>
+			<th>ホームページ</th>
+			<td>{{$data.homepage}}</td>
+		</tr>
+		<tr>
+			<th>備考</th>
+			<td>{{$data.note|escape|nl2br}}</td>{{** 改行（brタグ）が必要な場合は、nl2br を付ける **}}
+		</tr>
+	</table>
+
+	<p>
+		<input type="submit" value="再入力する" onclick="document.mailForm.act.value='input';">
+		<input type="submit" value="登録する" onclick="document.mailForm.act.value='complete';">
+	</p>
+
+	<input type="hidden" name="act" value="">
+	{{** 入力画面へ： <input type="hidden" name="act" value="input"> **}}
+	{{** 完了画面へ： <input type="hidden" name="act" value="complete"> **}}
+</form>
+
+
+</body>
+</html>
