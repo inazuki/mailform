@@ -19,11 +19,11 @@
 
 require_once "MailForm.config.php";
 require_once "rubato/Rubato.php";
-require_once "rubato/controller/RubatoMailForm.php";
+require_once "rubato/RubatoPageMailForm.php";
 
-class MailForm extends RubatoMailForm {
+class MailForm extends RubatoPageMailForm {
 	public function __construct($params) {
-		parent::__construct(new Rubato(false));
+		parent::__construct(false, true); //RubatoPageForm($useDB=true, $isSession=true)
 		$this->setParams($params);
 		$this->action();
 	}

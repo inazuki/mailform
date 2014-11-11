@@ -1,13 +1,12 @@
 <?php
 /**
- * RubatoViewWeb（PHP5.3未満用）
+ * RubatoViewWeb
  *
  * Copyright (c) 2013-2014 rubato
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  *
- * PHP versions 5.0 - 5.2.x
- * PEAR versions 1.9 and later
+ * PHP versions 5 and later
  *
  * @package		rubato.RubatoViewWeb
  * @author		Tsuyoshi Inazuki <t.inazuki@rubato.jp>
@@ -19,15 +18,9 @@
  * @update		2014-09-01
  */
 
-
 require_once SMARTY_PATH . DS . 'Smarty.class.php';
 
-
 class RubatoViewWeb extends Smarty {
-
-	public $debug		= false;	// デバッグ表示
-	public $isForward	= false;	// 転送状態か（true:画面出力しない）
-
 
 	/**
 	 * コンストラクター
@@ -58,14 +51,11 @@ class RubatoViewWeb extends Smarty {
 
 	/**
 	 * 画面を表示する（Smarty::displayのラッパー）
+	 * @param	String	$path	ファイルPATH
 	 */
 	public function display($path="") {
-		// 転送状態の時は画面出力しない
-		if ($this->isForward) return;
-
 		$dirName = dirname($_SERVER['SCRIPT_NAME']);
 		if ($dirName == "/" || $dirName == ".") $dirName = "";
-
 
 		$searchPathList = array();
 		if ($path == "") {
@@ -117,17 +107,8 @@ class RubatoViewWeb extends Smarty {
 		}
 	}
 
-
-	/**
-	 * 画面を転送する
-	 */
-	public function forward($url) {
-		$this->isForward = true;
-		header("Location: " . $url);
-	}
-
 }
 
-class RubatoSmartyException      extends Exception { }
+class RubatoSmartyException extends Exception { }
 
 ?>

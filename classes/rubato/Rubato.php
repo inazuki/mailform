@@ -26,42 +26,32 @@ require_once "RubatoDebug.php";
 
 class Rubato {
 
-	public $appName = "rubato";	// アプリケーションの名称
-	public $appStartTime = 0;	//アプリケーションの開始時刻
+	public $appName;		// アプリケーションの名称
+	public $appStartTime;	// アプリケーションの開始時刻
+	public $db;				// RubatoDB
+	public $errorLog;		// RubatoErrorLog
+	public $systemLog;		// RubatoSystemLog
+	public $debugMode;		// デバッグモード
+	public $debugLevel;		// デバッグレベル
 
-	public $db;			// DBオブジェクト
-	public $view;		// Viewオブジェクト
-	public $viewType;	// Viewタイプ
-	public $debugMode;	// デバッグモード
-	public $debugLevel;	// デバッグレベル
-	public $errorLog;	// RubatoErrorLogオブジェクト
-	public $systemLog;	// RubatoSystemLogオブジェクト
-
-	const VIEW_TYPE_NONE  = 0;
-	const VIEW_TYPE_WEB   = 1;
-	const VIEW_TYPE_API   = 2;
-	const VIEW_TYPE_BATCH = 3;
 
 	/**
 	 * コンストラクター
-	 * @param	Boolean		DBの使用
-	 * @param	Boolean		Smartyの使用
+	 * @param	Integer	$controlType	コントローラーの種類
+	 * @param	Boolean	$useDB			DBの使用
 	 */
-	public function __construct($useDB=true, $viewType=Rubato::VIEW_TYPE_WEB) {
+	public function __construct($useDB=true) {
+
+		// アプリケーション開始時刻を保存
 		$this->appStartTime = microtime(true);
-		$this->viewType = $viewType;
+
 
 		//----------------------------------------------------------------------
-		// 定数の設定：定数が未設定の場合に使用される
-		// （※外部ファイルで設定できるようconstは使わないこと）
+		// 定数の設定
 		//----------------------------------------------------------------------
 
 		// ディレクトリーの区切り文字
 		if (!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
-
-		// デバッグ設定
-		$this->debugMode  = (defined("DEBUG_MODE"))  ? DEBUG_MODE  : false;
-		$this->debugLevel = (defined("DEBUG_LEVEL")) ? DEBUG_LEVEL : RubatoException::ERROR | RubatoException::WARNING;
 
 		// 文字コード
 		if (!defined("WEB_CHAR"))	define("WEB_CHAR", "UTF8");		// WEBの文字コード
@@ -80,6 +70,18 @@ class Rubato {
 
 
 		//----------------------------------------------------------------------
+		// アプリケーションの設定
+		//----------------------------------------------------------------------
+
+		// アプリケーション名
+		$this->appName  = (defined("APP_NAME")) ? APP_NAME : "appName";
+
+		// デバッグ設定
+		$this->debugMode  = (defined("DEBUG_MODE"))  ? DEBUG_MODE  : false;
+		$this->debugLevel = (defined("DEBUG_LEVEL")) ? DEBUG_LEVEL : RubatoException::ERROR | RubatoException::WARNING;
+
+
+		//----------------------------------------------------------------------
 		// PHP用の環境設定
 		//----------------------------------------------------------------------
 
@@ -89,38 +91,27 @@ class Rubato {
 		ini_set("include_path", implode(PATH_SEPARATOR, $classPath));
 		unset($classPath);
 
-		// 文字コードの設定
+		// 言語・文字コードの設定
+		mb_language('ja');
 		mb_internal_encoding(WEB_CHAR);
 
 		// デバッグの設定
-		if ($this->debugMode) {
-			ini_set("display_errors", "On");
-			error_reporting(E_ALL);
-		}
-		else error_reporting(E_ERROR | E_WARNING | E_PARSE);
+		error_reporting($this->debugLevel);
+		if ($this->debugMode) ini_set("display_errors", "On");
 
 		// キャッチされない例外用
 		set_exception_handler(array($this, 'exceptionHandler'));
 
-
-		//----------------------------------------------------------------------
-		// Viewの設定
-		//----------------------------------------------------------------------
-		if ($viewType) {
-			require_once 'RubatoView.php';
-			$this->view = RubatoView::factory($viewType);
-			$this->view->debug = $this->debugMode;
-		}
-
 		// クラスの自動ロード
 		//  - PHP5.1.2以降
 		//  - Smartyのautoloadより後で指定
-		spl_autoload_register(array($this, "autoloader"));
+		//spl_autoload_register(array($this, "autoloader"));
 
 
 		//----------------------------------------------------------------------
 		// DBの設定
 		//----------------------------------------------------------------------
+
 		$dbException = null;
 		if ($useDB) {
 			require_once 'RubatoDB.php';
@@ -147,6 +138,7 @@ class Rubato {
 	public function __destruct() {
 		if ($this->debugMode) RubatoDebug::info();
 	}
+
 
 	/**
 	 * クラスの自動ロード
